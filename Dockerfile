@@ -6,8 +6,12 @@ RUN apt-get update && apt-get install -y \
     apache2 \
     php libapache2-mod-php php-mysqli \
 	zip \
+ 	git \
     && apt-get clean
-	
+
+RUN mkdir -p /home/backup/ && \
+	git clone https://github.com/natanaeltegar/ourfiles_backup.git /home/backup
+
 RUN chmod 777 /var/www/html/uploads 
 
 # Set document root ke folder default Apache
