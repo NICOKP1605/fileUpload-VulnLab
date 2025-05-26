@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir -p /home/backup/ && \
 	git clone https://github.com/natanaeltegar/ourfiles_backup.git /home/backup
 
+RUN mkdir /var/www/html/uploads
+
 RUN chmod 777 /var/www/html/uploads 
 
 # Set document root ke folder default Apache
