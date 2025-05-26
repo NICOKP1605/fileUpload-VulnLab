@@ -6,25 +6,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["fileToUpload"])) {
     }
 
     $fileName = basename($_FILES["fileToUpload"]["name"]);
+    $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
     $targetFile = $targetDir . $fileName;
-    $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-    // Batasi ukuran file (maksimal 5MB)
-    if ($_FILES["fileToUpload"]["size"] > 5 * 1024 * 1024) {
-        die("Ukuran file terlalu besar (maksimal 5MB).");
+    // Cek apakah file sudah ada, jika ya, buat nama unik
+    $counter = 1;
+    while (file_exists($targetFile)) {
+        $targetFile = $targetDir . pathinfo($fileName, PATHINFO_FILENAME) . "_$counter." . $fileType;
+        $counter++;
     }
 
-    // Cek apakah file sudah ada
-    if (file_exists($targetFile)) {
-        die("File sudah ada. Silakan upload file dengan nama berbeda.");
-    }
-
-    // Pindahkan file ke folder uploads/
+    // Pindahkan file yang diupload ke folder uploads
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $targetFile)) {
-        echo "File berhasil diupload: <a href='$targetFile' target='_blank'>$fileName</a>";
-        echo "<br><a href='index.php'>Kembali</a>";
+        header("Location: index.php?status=success");
+        exit();
     } else {
-        echo "Terjadi kesalahan saat mengupload file.";
+        header("Location: index.php?status=error&type=upload");
+        exit();
     }
 } else {
     header("Location: index.php");
